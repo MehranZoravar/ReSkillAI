@@ -1,0 +1,51 @@
+# configs/default.yaml
+
+paths:
+  # Raw inputs (place these after downloading/renaming)
+  raw_data: data/raw
+  postings: data/raw/postings.csv
+  job_skills: data/raw/job_skills.csv
+  skill_mapping: data/raw/skill_mapping.csv
+
+  # Processed
+  user_job: data/user_job.csv
+  models_dir: models
+  lr_model: models/lr.pkl
+  skill_transformer: models/skill_transformer.pt
+
+  # Optional assets/logs
+  assets_dir: assets
+  logs_dir: logs
+
+seed: 42
+
+build_user:
+  max_jobs: null
+
+train_lr:
+  user_job: ${paths.user_job}
+  model_out: ${paths.lr_model}
+  test_size: 0.2
+  max_iter: 1000
+  # class_weight: null   # set to "balanced" if you want
+
+skill_transformer_train:
+  user_job: ${paths.user_job}
+  out: ${paths.skill_transformer}
+  epochs: 20
+  lr: 0.001
+  batch_size: 256
+  knn_k: 5
+  suggest_threshold: 0.2
+  fallback_topk: 3
+
+recommend:
+  postings: ${paths.postings}
+  job_skills: ${paths.job_skills}
+  skill_mapping: ${paths.skill_mapping}
+  lr_model: ${paths.lr_model}
+  transformer_weights: ${paths.skill_transformer}
+  top_jobs: 5
+  default_cv: assets/samples/CV.png
+  # If true, only show jobs that require extra skills beyond the user's set
+  require_more_skills: true
